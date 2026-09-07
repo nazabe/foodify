@@ -162,7 +162,6 @@ model-viewer::part(ar-button) { display: none !important; }
 .error-box {
   position: absolute;
   inset: 0;
-  display: flex;
   flex-direction: column;
   gap: 14px;
   align-items: center;
@@ -171,7 +170,10 @@ model-viewer::part(ar-button) { display: none !important; }
   z-index: 6;
   text-align: center;
   padding: 20px;
+  display: none;
 }
+
+.error-box:not([hidden]) { display: flex; }
 
 .error-box p { color: var(--accent-dark); font-weight: 600; }
 
@@ -254,7 +256,7 @@ model-viewer::part(ar-button) { display: none !important; }
 .product-actions { margin-top: 4px; }
 
 .btn-ar {
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 10px;
   width: 100%;
@@ -270,6 +272,8 @@ model-viewer::part(ar-button) { display: none !important; }
   box-shadow: 0 8px 20px rgba(150, 65, 31, 0.35);
   transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s;
 }
+
+.btn-ar:not([hidden]) { display: inline-flex; }
 
 .btn-ar:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(150, 65, 31, 0.42); }
 
