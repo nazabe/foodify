@@ -3,244 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Visor 3D - AR</title>
-  
-  <!-- 🔥 Misma versión que funcionaba -->
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
-  
-  <style>
-    /* Reset mínimo para no interferir */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #000;
-    }
-    
-    model-viewer {
-      width: 100vw;
-      height: 100vh;
-      background-color: #111;
-      display: block;
-    }
-    
-    /* 👇 NO tocar el botón AR directamente para no romperlo */
-    /* Solo le damos un poco más de tamaño y visibilidad */
-    model-viewer::part(ar-button) {
-      background: #4285f4 !important;
-      color: white !important;
-      padding: 14px 28px !important;
-      border-radius: 50px !important;
-      font-size: 16px !important;
-      font-weight: bold !important;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
-      border: none !important;
-      cursor: pointer !important;
-    }
-    
-    /* Botón de fallback (solo aparece si el nativo no está) */
-    #fallback-ar {
-      position: fixed;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #4285f4;
-      color: white;
-      border: none;
-      border-radius: 50px;
-      padding: 16px 32px;
-      font-size: 16px;
-      font-weight: bold;
-      z-index: 20;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      cursor: pointer;
-      display: none;
-      /* Solo visible en móvil */
-    }
-    
-    #status {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-size: 13px;
-      z-index: 10;
-      text-align: center;
-      pointer-events: none;
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.1);
-      max-width: 90%;
-      transition: all 0.3s;
-    }
-    
-    #status .emoji { font-size: 16px; }
-  </style>
+  <title>foodify — Menú digital en realidad aumentada</title>
+  <meta name="description" content="Demo de foodify: catálogo de cafetería con productos 3D y realidad aumentada.">
+
+  <!-- model-viewer (self-hosted, versión consistente con package.json) -->
+  <script type="module" src="vendor/model-viewer.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  
-  <model-viewer
-    id="mv"
-    src="tiny_planet_friends_3d-mug-2923.glb"
-    alt="Un modelo 3D"
-    camera-controls
-    min-camera-orbit="auto auto 50%"
-    max-camera-orbit="auto auto 200%"
-    ar
-    ar-modes="webxr scene-viewer quick-look"
-    auto-rotate
-    shadow-intensity="1"
-    exposure="1"
-    loading="eager">
-  </model-viewer>
-  
-  <div id="status">
-    <span class="emoji">🔄</span> Cargando modelo...
-  </div>
-  
-  <button id="fallback-ar">📱 Ver en AR (Google Lens)</button>
 
-  <script>
-    (function() {
-      'use strict';
-      
-      const mv = document.getElementById('mv');
-      const status = document.getElementById('status');
-      const fallbackBtn = document.getElementById('fallback-ar');
-      
-      let arButtonVisible = false;
-      
-      function updateStatus(text, emoji = '🔄') {
-        status.innerHTML = `<span class="emoji">${emoji}</span> ${text}`;
-      }
-      
-      // --- Eventos de model-viewer ---
-      
-      mv.addEventListener('load', () => {
-        updateStatus('✅ Modelo listo. Busca el botón AR 🥽', '✅');
-        console.log('✅ Modelo cargado');
-        
-        // Verificar si el botón AR está visible
-        setTimeout(checkArButton, 1000);
-      });
-      
-      mv.addEventListener('error', (e) => {
-        console.error('❌ Error:', e.detail);
-        updateStatus('⚠️ Error al cargar el modelo', '⚠️');
-      });
-      
-      mv.addEventListener('ar-ready', () => {
-        updateStatus('🔮 AR activo!', '🔮');
-        console.log('✅ AR activado');
-      });
-      
-      mv.addEventListener('ar-unload', () => {
-        updateStatus('👋 AR cerrado', '👋');
-      });
-      
-      // --- Detectar botón AR ---
-      function checkArButton() {
-        try {
-          const shadowRoot = mv.shadowRoot;
-          if (shadowRoot) {
-            const arButton = shadowRoot.querySelector('.ar-button');
-            if (arButton) {
-              const style = window.getComputedStyle(arButton);
-              const isVisible = style.display !== 'none' && style.visibility !== 'hidden';
-              
-              if (isVisible) {
-                arButtonVisible = true;
-                updateStatus('✅ Toca el botón AR 🥽 para ver en RA', '🥽');
-                console.log('✅ Botón AR visible');
-                // Ocultar fallback
-                fallbackBtn.style.display = 'none';
-              } else {
-                console.log('⚠️ Botón AR existe pero está oculto');
-                showFallback();
-              }
-            } else {
-              console.log('⚠️ Botón AR no encontrado en Shadow DOM');
-              showFallback();
-            }
-          } else {
-            console.log('⚠️ Shadow DOM no disponible');
-            showFallback();
-          }
-        } catch (err) {
-          console.warn('Error al verificar botón AR:', err);
-          showFallback();
-        }
-      }
-      
-      // --- Fallback: botón personalizado ---
-      function showFallback() {
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        
-        if (isMobile) {
-          fallbackBtn.style.display = 'block';
-          updateStatus('📱 El botón AR no aparece. Usa el botón inferior.', '📱');
-          console.log('✅ Fallback activado');
-        } else {
-          updateStatus('💻 AR solo disponible en dispositivos móviles', '💻');
-        }
-      }
-      
-      // --- Acción del botón fallback ---
-      fallbackBtn.addEventListener('click', () => {
-        const modelUrl = mv.src;
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        
-        if (isAndroid) {
-          // Intentar abrir con scene-viewer (Google Lens)
-          const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(modelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;end;`;
-          window.location.href = intentUrl;
-          console.log('📱 Abriendo scene-viewer en Android');
-        } else if (isIOS) {
-          const quickLookUrl = `https://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(modelUrl)}&mode=ar_preferred`;
-          window.location.href = quickLookUrl;
-          console.log('📱 Abriendo quick-look en iOS');
-        } else {
-          alert('La realidad aumentada solo está disponible en dispositivos móviles.');
-        }
-      });
-      
-      // --- Detectar soporte WebXR ---
-      if (navigator.xr) {
-        navigator.xr.isSessionSupported('immersive-ar')
-          .then(supported => {
-            if (supported) {
-              console.log('✅ WebXR AR soportado');
-            } else {
-              console.log('⚠️ WebXR AR no soportado, se usará scene-viewer');
-            }
-          })
-          .catch(err => {
-            console.log('⚠️ Error checking WebXR:', err);
-          });
-      }
-      
-      // --- Inicializar ---
-      updateStatus('🔄 Cargando modelo...', '🔄');
-      
-      // Si el modelo no carga en 10s, mostrar mensaje
-      setTimeout(() => {
-        const statusText = status.textContent;
-        if (statusText.includes('Cargando')) {
-          updateStatus('⏳ El modelo está tardando en cargar...', '⏳');
-        }
-      }, 10000);
-      
-    })();
-  </script>
+  <header class="site-header">
+    <a class="brand" href="#">
+      <span class="brand-mark" aria-hidden="true">f</span>
+      <span class="brand-name">foodify</span>
+    </a>
+    <span class="badge-demo">DEMO</span>
+  </header>
+
+  <main class="site-main">
+
+    <section class="intro">
+      <h1>Tu menú, en realidad aumentada</h1>
+      <p>Mirá los productos de la cafetería en 3D y proyectalos en tu mesa con <strong>AR</strong> antes de pedir.</p>
+    </section>
+
+    <section class="product-card" aria-label="Producto en 3D">
+
+      <div class="viewer-wrap">
+        <model-viewer
+          id="mv"
+          alt="Taza foodify en 3D"
+          camera-controls
+          min-camera-orbit="auto auto 50%"
+          max-camera-orbit="auto auto 200%"
+          auto-rotate
+          rotation-per-second="24deg"
+          shadow-intensity="1.2"
+          exposure="1"
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          ar-scale="auto"
+          loading="eager">
+        </model-viewer>
+
+        <div id="loading" class="loading" aria-hidden="false">
+          <div class="spinner"></div>
+          <p id="loading-text">Preparando el producto…</p>
+        </div>
+
+        <div id="error-box" class="error-box" hidden>
+          <p>⚠️ No pudimos cargar el modelo.</p>
+          <button id="btn-retry" type="button">Reintentar</button>
+        </div>
+
+        <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+      </div>
+
+      <div class="product-info">
+        <div class="product-head">
+          <div>
+            <h2 id="product-name">Taza</h2>
+            <span id="product-category" class="chip">Colección</span>
+          </div>
+          <span class="ar-tag" id="ar-tag">AR</span>
+        </div>
+
+        <p id="product-tagline" class="tagline"></p>
+        <p id="product-desc" class="description"></p>
+
+        <div class="product-actions">
+          <button id="btn-ar" class="btn-ar" type="button" hidden>
+            <span class="ar-ico" aria-hidden="true"></span>
+            <span class="btn-ar-label">Ver en tu espacio (AR)</span>
+          </button>
+          <p id="desktop-note" class="desktop-note" hidden>
+            💡 Probalo en tu celular para verlo en realidad aumentada.
+          </p>
+        </div>
+
+        <div class="gesture-hint" aria-hidden="true">
+          <span>↻ Girar</span>
+          <span>🔍 Zoom</span>
+          <span>✋ Arrastrar</span>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>foodify · Demo para inversores — <span id="foot-year"></span></p>
+  </footer>
+
+  <script src="products.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

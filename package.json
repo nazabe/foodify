@@ -1,6 +1,16 @@
 {
+	"name": "foodify",
+	"version": "0.1.0",
+	"private": true,
+	"description": "foodify — demo de menú digital con realidad aumentada (MVP)",
+	"scripts": {
+		"serve": "python3 -m http.server 8080",
+		"optimize:model": "gltf-transform resize models/original/tiny_planet_friends_3d-mug-2923.glb models/_tmp.glb --width 1024 --height 1024 && gltf-transform optimize models/_tmp.glb models/foodify-mug.glb --compress draco --simplify false && rm models/_tmp.glb"
+	},
 	"dependencies": {
-		"@google/model-viewer": "^4.3.1",
-		"three": "^0.185.1"
+		"@google/model-viewer": "^4.3.1"
+	},
+	"devDependencies": {
+		"@gltf-transform/cli": "^4.1.0"
 	}
 }
