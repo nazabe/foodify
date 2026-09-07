@@ -1,34 +1,249 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visor 3D</title>
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>AR.js con GLB - Prueba Rápida</title>
+  
+  <!-- 🔥 IMPORTANTE: A-Frame y AR.js ANTES de la escena -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aframe-ar@3.0.0/dist/aframe-ar.min.js"></script>
+  
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      overflow: hidden; 
+      font-family: Arial, sans-serif;
+      background: #000;
     }
-    model-viewer {
-      width: 100%;
+    
+    a-scene {
+      width: 100vw;
       height: 100vh;
-      background-color: #eee;
+    }
+    
+    /* Botón para activar la cámara (útil en móviles) */
+    #start-btn {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 16px 32px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 20;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: transform 0.2s;
+    }
+    
+    #start-btn:active {
+      transform: translate(-50%, -50%) scale(0.95);
+    }
+    
+    #info {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.85);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 14px;
+      z-index: 10;
+      text-align: center;
+      pointer-events: none;
+      max-width: 90%;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    #info .emoji {
+      font-size: 18px;
+    }
+    
+    #loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 16px;
+      z-index: 5;
+      text-align: center;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top: 4px solid #4285f4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <model-viewer
-    src="tiny_planet_friends_3d-mug-2923.glb"
-    alt="Un modelo 3D"
-    camera-controls
-    min-camera-orbit="auto auto 50%"
-    max-camera-orbit="auto auto 200%"
-    ar
-    ar-modes="webxr scene-viewer quick-look"
-    auto-rotate
-    shadow-intensity="1"
-    exposure="1">
-  </model-viewer>
+  
+  <!-- Botón de inicio (para móviles que requieren interacción) -->
+  <button id="start-btn">📷 Iniciar AR</button>
+  
+  <div id="loading">
+    <div class="spinner"></div>
+    <div>Cargando AR...</div>
+  </div>
+  
+  <div id="info">
+    <span class="emoji">📷</span> Apunta al marcador HIRO para ver el modelo 3D
+  </div>
+
+  <!-- Escena AR - Ahora correctamente después de los scripts -->
+  <a-scene 
+    id="scene"
+    embedded 
+    arjs="sourceType: webcam; 
+          debugUIEnabled: false; 
+          detectionMode: mono_and_matrix; 
+          matrixCodeType: 3x3;
+          camera: true;">
+    
+    <!-- Cámara -->
+    <a-camera id="camera"></a-camera>
+
+    <!-- Marcador HIRO -->
+    <a-marker preset="hiro" id="marker">
+      
+      <!-- Tu modelo GLB -->
+      <a-entity
+        id="model"
+        gltf-model="url(tiny_planet_friends_3d-mug-2923.glb)"
+        scale="0.25 0.25 0.25"
+        position="0 0 0"
+        rotation="0 0 0"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear;">
+      </a-entity>
+      
+      <!-- Plano de sombra -->
+      <a-plane 
+        position="0 -0.05 0" 
+        rotation="-90 0 0" 
+        width="1.2" 
+        height="1.2" 
+        color="#ffffff" 
+        opacity="0.2"
+        shadow="receive: true">
+      </a-plane>
+      
+    </a-marker>
+
+    <!-- Fondo ambiente -->
+    <a-light type="ambient" color="#ffffff" intensity="0.5"></a-light>
+    <a-light type="directional" color="#ffffff" intensity="0.8" position="1 2 1"></a-light>
+    
+  </a-scene>
+
+  <script>
+    (function() {
+      'use strict';
+      
+      const scene = document.getElementById('scene');
+      const loading = document.getElementById('loading');
+      const info = document.getElementById('info');
+      const startBtn = document.getElementById('start-btn');
+      
+      // Función para ocultar loading
+      function hideLoading() {
+        loading.style.display = 'none';
+      }
+      
+      // Función para actualizar mensaje de info
+      function updateInfo(text, emoji = '📷') {
+        info.innerHTML = `<span class="emoji">${emoji}</span> ${text}`;
+      }
+      
+      // Cuando la escena cargue
+      scene.addEventListener('loaded', () => {
+        hideLoading();
+        console.log('✅ AR.js cargado correctamente');
+      });
+      
+      // Detectar marcador
+      const marker = document.getElementById('marker');
+      
+      marker.addEventListener('markerFound', () => {
+        updateInfo('✅ Marcador detectado! Mostrando modelo', '🎉');
+        console.log('✅ Marcador HIRO encontrado');
+      });
+      
+      marker.addEventListener('markerLost', () => {
+        updateInfo('📷 Buscando marcador HIRO...', '🔍');
+        console.log('❌ Marcador perdido');
+      });
+      
+      // Botón de inicio (necesario para activar la cámara en móviles)
+      startBtn.addEventListener('click', async () => {
+        try {
+          // Intentar activar la cámara
+          const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'environment' } 
+          });
+          
+          // Ocultar botón
+          startBtn.style.display = 'none';
+          
+          // Actualizar estado
+          updateInfo('📷 Buscando marcador HIRO...', '🔍');
+          
+          // Si el stream se obtiene, la cámara está activa
+          console.log('✅ Cámara activada correctamente');
+          
+        } catch (err) {
+          console.error('❌ Error al activar la cámara:', err);
+          updateInfo('⚠️ Error: Permiso de cámara denegado', '⚠️');
+          startBtn.textContent = '📷 Intentar de nuevo';
+          startBtn.style.display = 'block';
+        }
+      });
+      
+      // Detectar si el navegador soporta AR
+      if (navigator.xr) {
+        navigator.xr.isSessionSupported('immersive-ar')
+          .then(supported => {
+            if (supported) {
+              console.log('✅ WebXR AR soportado');
+            } else {
+              console.log('⚠️ WebXR AR no soportado, usando detección de marcadores');
+            }
+          })
+          .catch(err => {
+            console.log('⚠️ Error al verificar WebXR:', err);
+          });
+      }
+      
+      // Fallback: si la cámara no se activa, mostrar el botón
+      setTimeout(() => {
+        if (startBtn.style.display !== 'none') {
+          startBtn.style.display = 'block';
+          updateInfo('📷 Presiona "Iniciar AR" para activar la cámara', '👆');
+        }
+      }, 2000);
+      
+      // Ocultar loading después de 5 segundos por si acaso
+      setTimeout(hideLoading, 5000);
+      
+    })();
+  </script>
 </body>
 </html>
