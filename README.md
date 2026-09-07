@@ -31,7 +31,20 @@ El CTA propio se muestra en móviles; ante cualquier imposibilidad se redirige a
 pnpm install          # instala dev deps (gltf-transform)
 pnpm serve            # server local: http://localhost:8080
 pnpm optimize:model   # re-optimiza models/foodify-mug.glb desde models/original/
+pnpm build:variants   # regenera models/variants/foodify-mug-s{100,75,50,30}.glb
 ```
+
+## 🧪 Probar variantes de modelo (trade-off rendimiento/calidad)
+Se puede conmutar el modelo por URL sin redeployar (todas las variantes viven en `models/variants/`):
+
+```
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s100.glb  # baseline (500k triángulos)
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s75.glb   # ~375k
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s50.glb   # ~250k
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30.glb   # ~189k
+```
+
+Sin parámetro se usa el modelo por defecto (`products.js`). La variante activa se muestra en el cartel de estado y en consola.
 
 ## 📁 Estructura
 ```
@@ -40,7 +53,8 @@ styles.css          # marca "foodify"
 app.js              # lógica de carga, estados y AR
 products.js         # catálogo (1 producto por ahora)
 models/
-  foodify-mug.glb   # modelo optimizado (committeado)
+  foodify-mug.glb   # modelo optimizado por defecto (committeado)
+  variants/         # versiones para testear trade-off rendimiento/calidad
   original/         # fuente 19MB (ignorada por git)
 vendor/
   model-viewer.min.js

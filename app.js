@@ -2,6 +2,14 @@ const mv = document.getElementById('mv');
 const products = window.FOODIFY_PRODUCTS || [];
 const product = products[0];
 
+// Permite probar variantes del modelo sin redeploy: ?model=models/variants/foodify-mug-s50.glb
+const MODEL_PARAM = new URLSearchParams(location.search).get('model');
+const VARIANT_LABEL = MODEL_PARAM ? MODEL_PARAM.split('/').pop().replace(/\.glb$/, '') : '';
+
+function modelUrl() {
+  return MODEL_PARAM || product.model;
+}
+
 const els = {
   loading: document.getElementById('loading'),
   loadingText: document.getElementById('loading-text'),
@@ -56,17 +64,18 @@ if (!product) {
 }
 
 function applyProduct() {
-  document.title = `${product.name} · foodify`;
+  document.title = `${product.name} · foodify${VARIANT_LABEL ? ' · ' + VARIANT_LABEL : ''}`;
   els.name.textContent = product.name;
   els.category.textContent = product.category;
   els.tagline.textContent = product.tagline;
   els.desc.textContent = product.description;
   mv.alt = product.alt;
-  mv.src = product.model;
+  mv.src = modelUrl();
+  if (VARIANT_LABEL) console.log(`🧪 Variante activa: ${VARIANT_LABEL}`);
 }
 
 function absoluteModelUrl() {
-  const u = new URL(product.model, window.location.href);
+  const u = new URL(modelUrl(), window.location.href);
   return u.href;
 }
 
@@ -131,7 +140,7 @@ function updateAREntry() {
 mv.addEventListener('load', () => {
   hideLoading();
   els.errorBox.hidden = true;
-  showStatus('Producto listo ✅', 'ok', 2200);
+  showStatus(`Producto listo ✅${VARIANT_LABEL ? ' (' + VARIANT_LABEL + ')' : ''}`, 'ok', 2200);
   console.log('✅ Modelo cargado');
   updateAREntry();
 });
@@ -165,7 +174,7 @@ els.btnAr.addEventListener('click', launchAR);
 els.btnRetry.addEventListener('click', () => {
   els.errorBox.hidden = true;
   setLoading(null);
-  mv.src = `${product.model}?t=${Date.now()}`;
+  mv.src = `${modelUrl()}?t=${Date.now()}`;
 });
 
 // --- Arranque ---
