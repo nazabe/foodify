@@ -7,8 +7,9 @@ Una vez desplegado: `https://<usuario>.github.io/foodify/`
 
 ## 🧰 Stack
 - HTML/CSS/JS vanilla, mobile-first, sin build.
-- [`<model-viewer>`](https://modelviewer.dev) v4.3.1 **self-hosted** en `vendor/` (sin CDN).
+- [`<model-viewer>`](https://modelviewer.dev) v4.3.1 vía **CDN** (unpkg, Brotli + caché compartida) para carga rápida en mobile.
 - Catálogo en `products.js` → permite agregar más modelos sin tocar el HTML.
+- Optimización de modelos con `@gltf-transform` (dev).
 
 ## 🎯 Compatibilidad de AR
 | Dispositivo | Comportamiento |
@@ -23,28 +24,27 @@ El CTA propio se muestra en móviles; ante cualquier imposibilidad se redirige a
 ## 🧪 Estado
 - ✅ Visor 3D funcional (rotación, zoom, sombra, carga con progreso).
 - ✅ CTA de AR con estados claros y fallback determinístico.
-- ✅ Modelo optimizado: `models/foodify-mug.glb` (**~2.8 MB**, original 19 MB).
+- ✅ Modelo default optimizado para carga mobile: `models/foodify-mug.glb` = **s30 (~189k triángulos) · texturas 512 · escala real (~11 cm)** → **~1 MB** (original 19 MB).
 - ⚠️ AR requiere **HTTPS y URL pública**: funciona en GitHub Pages; **no** en `localhost` desde el celular (usar `ngrok` o el deploy).
 
 ## 🛠 Comandos
 ```bash
-pnpm install          # instala dev deps (gltf-transform)
+pnpm install          # instala dev deps (gltf-transform, core, extensions)
 pnpm serve            # server local: http://localhost:8080
-pnpm optimize:model   # re-optimiza models/foodify-mug.glb desde models/original/
-pnpm build:variants   # regenera models/variants/foodify-mug-s{100,75,50,30}.glb
+pnpm build:models     # reconstruye default + variantes desde models/original/
 ```
 
 ## 🧪 Probar variantes de modelo (trade-off rendimiento/calidad)
 Se puede conmutar el modelo por URL sin redeployar (todas las variantes viven en `models/variants/`):
 
 ```
-https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s100.glb  # baseline (500k triángulos)
-https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s75.glb   # ~375k
-https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s50.glb   # ~250k
-https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30.glb   # ~189k
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30.glb   # default (escala real ~11 cm, tex 512)
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s20.glb   # geometría más liviana (tex 512)
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s15.glb   # geometría mínima (tex 512)
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30-t1024.glb  # misma geometría pero texturas 1024 (A/B calidad)
 ```
 
-Sin parámetro se usa el modelo por defecto (`products.js`). La variante activa se muestra en el cartel de estado y en consola.
+Sin parámetro se usa el modelo por defecto (`models/foodify-mug.glb`, s30). La variante activa se muestra en el cartel de estado y en consola.
 
 ## 📁 Estructura
 ```
@@ -52,12 +52,13 @@ index.html          # página (producto 3D + CTA AR)
 styles.css          # marca "foodify"
 app.js              # lógica de carga, estados y AR
 products.js         # catálogo (1 producto por ahora)
+scripts/
+  build.mjs         # pipeline de modelos (resize → simplify → escala real → draco)
+  rescale.mjs       # multiplica la escala de los nodos del modelo (metros reales)
 models/
-  foodify-mug.glb   # modelo optimizado por defecto (committeado)
-  variants/         # versiones para testear trade-off rendimiento/calidad
+  foodify-mug.glb   # modelo default (s30, escala real, tex 512) ~1 MB
+  variants/         # s30/s20/s15 + s30-t1024 para A/B
   original/         # fuente 19MB (ignorada por git)
-vendor/
-  model-viewer.min.js
 ```
 
 ## 🚀 Deploy en GitHub Pages
