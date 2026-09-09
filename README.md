@@ -25,6 +25,7 @@ El CTA propio se muestra en móviles; ante cualquier imposibilidad se redirige a
 - ✅ Visor 3D funcional (rotación, zoom, sombra, carga con progreso).
 - ✅ CTA de AR con estados claros y fallback determinístico.
 - ✅ Modelo default optimizado para carga mobile: `models/foodify-mug.glb` = **s15 (~190k triángulos) · texturas 512 · escala real (~16.5 cm)** → **~1 MB** (original 19 MB).
+- 🔧 **Diagnóstico**: botón fijo `🔧` (abajo a la derecha) abre un panel con eventos de AR (`ar-status`, `modelIsVisible`, contexto WebGL, visibilidad de pestaña). Solo logging, sin cambios de comportamiento.
 - ⚠️ AR requiere **HTTPS y URL pública**: funciona en GitHub Pages; **no** en `localhost` desde el celular (usar `ngrok` o el deploy).
 
 ## 🛠 Comandos

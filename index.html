@@ -98,7 +98,21 @@
     <p>foodify · Menú Digital con Realidad Aumentada — <span id="foot-year"></span></p>
   </footer>
 
+  <button id="btn-diag" type="button" aria-label="Abrir panel de diagnóstico" title="Diagnóstico">🔧</button>
+
+  <div id="diag-panel" hidden role="dialog" aria-label="Panel de diagnóstico">
+    <div class="diag-head">
+      <strong>Diagnóstico</strong>
+      <span id="diag-live" class="diag-live"></span>
+      <button type="button" id="diag-copy">Copiar</button>
+      <button type="button" id="diag-close" aria-label="Cerrar">✕</button>
+    </div>
+    <ol id="diag-log" class="diag-log"></ol>
+    <button type="button" id="diag-clear" class="diag-clear">Limpiar</button>
+  </div>
+
   <script src="products.js"></script>
   <script type="module" src="app.js"></script>
+  <script type="module" src="diagnostics.js"></script>
 </body>
 </html>
