@@ -6,12 +6,15 @@
 	"scripts": {
 		"serve": "python3 -m http.server 8080",
 		"optimize:model": "gltf-transform resize models/original/tiny_planet_friends_3d-mug-2923.glb models/_tmp.glb --width 1024 --height 1024 && gltf-transform optimize models/_tmp.glb models/foodify-mug.glb --compress draco --simplify false && rm models/_tmp.glb",
-		"build:variants": "mkdir -p models/variants && cp models/foodify-mug.glb models/variants/foodify-mug-s100.glb && gltf-transform resize models/original/tiny_planet_friends_3d-mug-2923.glb models/variants/_base.glb --width 1024 --height 1024 && gltf-transform optimize models/variants/_base.glb models/variants/foodify-mug-s75.glb --compress draco --simplify --simplify-ratio 0.75 && gltf-transform optimize models/variants/_base.glb models/variants/foodify-mug-s50.glb --compress draco --simplify --simplify-ratio 0.50 && gltf-transform optimize models/variants/_base.glb models/variants/foodify-mug-s30.glb --compress draco --simplify --simplify-ratio 0.30 && rm models/variants/_base.glb"
+		"build:variants": "mkdir -p models/variants && cp models/foodify-mug.glb models/variants/foodify-mug-s100.glb && gltf-transform resize models/original/tiny_planet_friends_3d-mug-2923.glb models/variants/_base.glb --width 1024 --height 1024 && gltf-transform optimize models/variants/_base.glb models/variants/foodify-mug-s75.glb --compress draco --simplify --simplify-ratio 0.75 && gltf-transform optimize models/variants/_base.glb models/variants/foodify-mug-s50.glb --compress draco --simplify --simplify-ratio 0.50 && gltf-transform optimize models/variants/_base.glb models/variants/foodify-mug-s30.glb --compress draco --simplify --simplify-ratio 0.30 && rm models/variants/_base.glb",
+		"build:scales": "gltf-transform resize models/original/tiny_planet_friends_3d-mug-2923.glb models/variants/_base.glb --width 1024 --height 1024 && gltf-transform optimize models/variants/_base.glb models/variants/_s30plain.glb --compress false --texture-compress false --simplify --simplify-ratio 0.30 && node scripts/rescale.mjs models/variants/_s30plain.glb models/variants/_s30x008.glb 0.08 && node scripts/rescale.mjs models/variants/_s30plain.glb models/variants/_s30x010.glb 0.10 && node scripts/rescale.mjs models/variants/_s30plain.glb models/variants/_s30x013.glb 0.13 && gltf-transform draco models/variants/_s30x008.glb models/variants/foodify-mug-s30x008.glb && gltf-transform draco models/variants/_s30x010.glb models/variants/foodify-mug-s30x010.glb && gltf-transform draco models/variants/_s30x013.glb models/variants/foodify-mug-s30x013.glb && rm -f models/variants/_base.glb models/variants/_s30plain.glb models/variants/_s30x008.glb models/variants/_s30x010.glb models/variants/_s30x013.glb"
 	},
 	"dependencies": {
 		"@google/model-viewer": "^4.3.1"
 	},
 	"devDependencies": {
-		"@gltf-transform/cli": "^4.1.0"
+		"@gltf-transform/cli": "^4.1.0",
+		"@gltf-transform/core": "^4.5.0",
+		"@gltf-transform/extensions": "^4.5.0"
 	}
 }

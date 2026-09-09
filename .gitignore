@@ -1,4 +1,5 @@
 node_modules/
 models/original/
+models/variants/_*.glb
 .DS_Store
 *.log

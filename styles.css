@@ -36,7 +36,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px clamp(16px, 4vw, 32px);
+  padding: 12px;
+  height: 15dvh;
 }
 
 .brand {
@@ -57,7 +58,7 @@ body {
   font-size: 20px;
   display: grid;
   place-items: center;
-  box-shadow: 0 4px 10px rgba(74, 50, 38, 0.25);
+  /* box-shadow: 0 4px 10px rgba(74, 50, 38, 0.25); */
 }
 
 .brand-name {
@@ -81,9 +82,10 @@ body {
 .site-main {
   flex: 1;
   width: 100%;
+  height: 100dvh;
   max-width: 1080px;
   margin: 0 auto;
-  padding: 8px clamp(16px, 4vw, 32px) 40px;
+  padding: 8px 16px;
 }
 
 .intro { text-align: center; margin: 8px 0 22px; }
@@ -118,7 +120,7 @@ body {
 
 model-viewer {
   width: 100%;
-  height: 100%;
+  height: 50%;
   display: block;
   --poster-color: transparent;
 }
@@ -246,7 +248,7 @@ model-viewer::part(ar-button) { display: none !important; }
   font-weight: 800;
   color: #fff;
   background: linear-gradient(135deg, var(--accent), var(--coffee));
-  box-shadow: 0 6px 14px rgba(74, 50, 38, 0.3);
+  /* box-shadow: 0 6px 14px rgba(74, 50, 38, 0.3); */
 }
 
 .tagline { color: var(--accent-dark); font-weight: 600; font-size: 15px; }

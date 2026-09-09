@@ -121,7 +121,7 @@ async function launchAR() {
     setTimeout(() => {
       els.btnAr.disabled = false;
       els.btnAr.classList.remove('busy');
-      els.btnAr.querySelector('.btn-ar-label').textContent = 'Ver en tu espacio (AR)';
+      els.btnAr.querySelector('.btn-ar-label').textContent = 'Ver en realidad aumentada';
     }, 400);
   }
 }
@@ -131,7 +131,7 @@ function updateAREntry() {
   els.btnAr.hidden = !isArUsable;
   els.desktopNote.hidden = isArUsable;
   if (isArUsable && mv.loaded) {
-    const label = IS_IOS ? 'Ver en tu espacio (Quick Look)' : 'Ver en tu espacio (AR)';
+    const label = IS_IOS ? 'Ver en realidad aumentada (Quick Look)' : 'Ver en realidad aumentada';
     els.btnAr.querySelector('.btn-ar-label').textContent = label;
   }
 }

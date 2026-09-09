@@ -24,6 +24,8 @@ El CTA propio se muestra en móviles; ante cualquier imposibilidad se redirige a
 - ✅ Visor 3D funcional (rotación, zoom, sombra, carga con progreso).
 - ✅ CTA de AR con estados claros y fallback determinístico.
 - ✅ Modelo optimizado: `models/foodify-mug.glb` (**~2.8 MB**, original 19 MB).
+- ✅ Sombra desactivada (`shadow-intensity=0`) para estabilidad en equipos de gama media/baja.
+- ✅ Variantes de escala real (`s30x008/010/013`) para calibrar el tamaño en AR.
 - ⚠️ AR requiere **HTTPS y URL pública**: funciona en GitHub Pages; **no** en `localhost` desde el celular (usar `ngrok` o el deploy).
 
 ## 🛠 Comandos
@@ -41,7 +43,12 @@ Se puede conmutar el modelo por URL sin redeployar (todas las variantes viven en
 https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s100.glb  # baseline (500k triángulos)
 https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s75.glb   # ~375k
 https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s50.glb   # ~250k
-https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30.glb   # ~189k
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30.glb   # ~189k (elegida)
+
+# Escalas reales (misma geometría s30; ancho real aprox. del objeto)
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30x008.glb  # ~9 cm
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30x010.glb  # ~11 cm
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30x013.glb  # ~15 cm
 ```
 
 Sin parámetro se usa el modelo por defecto (`products.js`). La variante activa se muestra en el cartel de estado y en consola.
