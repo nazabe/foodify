@@ -24,7 +24,7 @@ El CTA propio se muestra en móviles; ante cualquier imposibilidad se redirige a
 ## 🧪 Estado
 - ✅ Visor 3D funcional (rotación, zoom, sombra, carga con progreso).
 - ✅ CTA de AR con estados claros y fallback determinístico.
-- ✅ Modelo default optimizado para carga mobile: `models/foodify-mug.glb` = **s30 (~189k triángulos) · texturas 512 · escala real (~11 cm)** → **~1 MB** (original 19 MB).
+- ✅ Modelo default optimizado para carga mobile: `models/foodify-mug.glb` = **s15 (~190k triángulos) · texturas 512 · escala real (~16.5 cm)** → **~1 MB** (original 19 MB).
 - ⚠️ AR requiere **HTTPS y URL pública**: funciona en GitHub Pages; **no** en `localhost` desde el celular (usar `ngrok` o el deploy).
 
 ## 🛠 Comandos
@@ -38,13 +38,13 @@ pnpm build:models     # reconstruye default + variantes desde models/original/
 Se puede conmutar el modelo por URL sin redeployar (todas las variantes viven en `models/variants/`):
 
 ```
-https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30.glb   # default (escala real ~11 cm, tex 512)
-https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s20.glb   # geometría más liviana (tex 512)
-https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s15.glb   # geometría mínima (tex 512)
-https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30-t1024.glb  # misma geometría pero texturas 1024 (A/B calidad)
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s15.glb   # default (escala real ~16.5 cm, tex 512)
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s20.glb   # geometría intermedia (tex 512)
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s30.glb   # geometría más densa (tex 512)
+https://<usuario>.github.io/foodify/?model=models/variants/foodify-mug-s15-t1024.glb  # misma geometría pero texturas 1024 (A/B calidad)
 ```
 
-Sin parámetro se usa el modelo por defecto (`models/foodify-mug.glb`, s30). La variante activa se muestra en el cartel de estado y en consola.
+Sin parámetro se usa el modelo por defecto (`models/foodify-mug.glb`, s15). La variante activa se muestra en el cartel de estado y en consola.
 
 ## 📁 Estructura
 ```
@@ -56,8 +56,8 @@ scripts/
   build.mjs         # pipeline de modelos (resize → simplify → escala real → draco)
   rescale.mjs       # multiplica la escala de los nodos del modelo (metros reales)
 models/
-  foodify-mug.glb   # modelo default (s30, escala real, tex 512) ~1 MB
-  variants/         # s30/s20/s15 + s30-t1024 para A/B
+  foodify-mug.glb   # modelo default (s15, escala real ~16.5 cm, tex 512) ~1 MB
+  variants/         # s15/s20/s30 + s15-t1024 para A/B
   original/         # fuente 19MB (ignorada por git)
 ```
 

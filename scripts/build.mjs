@@ -9,7 +9,7 @@ const DEFAULT_OUT = resolve(ROOT, 'models/foodify-mug.glb');
 
 mkdirSync(VARIANTS, { recursive: true });
 
-const scale = 0.1; // ancho real aprox. ~11 cm (1 unidad glTF = 1 m)
+const scale = 0.15; // ancho real aprox. ~16.5 cm (1 unidad glTF = 1 m)
 const temp = (name) => resolve(VARIANTS, `_${name}.glb`);
 
 function runGltfTransform(...args) {
@@ -50,8 +50,8 @@ try {
     runGltfTransform('draco', scaled, resolve(VARIANTS, `foodify-mug-${tag}.glb`));
   }
 
-  console.log(`\n=== 3) Variante s30 con texturas 1024 (A/B calidad) ===`);
-  const plain1024 = temp('plain-s30-1024');
+  console.log(`\n=== 3) Variante s15 con texturas 1024 (A/B calidad) ===`);
+  const plain1024 = temp('plain-s15-1024');
   runGltfTransform(
     'optimize',
     temp('base1024'),
@@ -59,14 +59,14 @@ try {
     '--compress', 'false',
     '--texture-compress', 'false',
     '--simplify',
-    '--simplify-ratio', '0.30',
+    '--simplify-ratio', '0.15',
   );
-  const scaled1024 = temp('scaled-s30-1024');
+  const scaled1024 = temp('scaled-s15-1024');
   rescale(plain1024, scaled1024, scale);
-  runGltfTransform('draco', scaled1024, resolve(VARIANTS, 'foodify-mug-s30-t1024.glb'));
+  runGltfTransform('draco', scaled1024, resolve(VARIANTS, 'foodify-mug-s15-t1024.glb'));
 
-  console.log('\n=== 4) Default = s30 (tex 512, escala real) ===');
-  cpSync(resolve(VARIANTS, 'foodify-mug-s30.glb'), DEFAULT_OUT);
+  console.log('\n=== 4) Default = s15 (tex 512, escala real) ===');
+  cpSync(resolve(VARIANTS, 'foodify-mug-s15.glb'), DEFAULT_OUT);
   console.log(`✅ Default → ${DEFAULT_OUT}`);
 } finally {
   rmSync(temp('base512'), { force: true });
@@ -77,6 +77,6 @@ try {
   rmSync(temp('scaled-s30'), { force: true });
   rmSync(temp('scaled-s20'), { force: true });
   rmSync(temp('scaled-s15'), { force: true });
-  rmSync(temp('plain-s30-1024'), { force: true });
-  rmSync(temp('scaled-s30-1024'), { force: true });
+  rmSync(temp('plain-s15-1024'), { force: true });
+  rmSync(temp('scaled-s15-1024'), { force: true });
 }
