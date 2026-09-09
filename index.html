@@ -15,18 +15,19 @@
 <body>
 
   <header class="site-header">
-    <div class="brand" href="#">
-      <span class="brand-mark" aria-hidden="true">F</span>
-      <span class="brand-name">Foodify</span>
-    </div>
+    <a class="brand" href="#">
+      <span class="brand-mark" aria-hidden="true">f</span>
+      <span class="brand-name">foodify</span>
+    </a>
+    <span class="badge-demo">DEMO</span>
   </header>
 
   <main class="site-main">
 
-    <!-- <section class="intro">
+    <section class="intro">
       <h1>Tu menú, en realidad aumentada</h1>
       <p>Mirá los productos de la cafetería en 3D y proyectalos en tu mesa con <strong>AR</strong> antes de pedir.</p>
-    </section> -->
+    </section>
 
     <section class="product-card" aria-label="Producto en 3D">
 
@@ -39,7 +40,7 @@
           max-camera-orbit="auto auto 200%"
           auto-rotate
           rotation-per-second="24deg"
-          shadow-intensity="0"
+          shadow-intensity="1.2"
           exposure="1"
           ar
           ar-modes="webxr scene-viewer quick-look"
@@ -75,11 +76,17 @@
         <div class="product-actions">
           <button id="btn-ar" class="btn-ar" type="button" hidden>
             <span class="ar-ico" aria-hidden="true"></span>
-            <span class="btn-ar-label">Ver en realidad aumentada</span>
+            <span class="btn-ar-label">Ver en tu espacio (AR)</span>
           </button>
           <p id="desktop-note" class="desktop-note" hidden>
-            Probalo en tu celular para verlo en realidad aumentada.
+            💡 Probalo en tu celular para verlo en realidad aumentada.
           </p>
+        </div>
+
+        <div class="gesture-hint" aria-hidden="true">
+          <span>↻ Girar</span>
+          <span>🔍 Zoom</span>
+          <span>✋ Arrastrar</span>
         </div>
       </div>
 
@@ -87,7 +94,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>Foodify · Menú Digital con Realidad Aumentada — <span id="foot-year"></span></p>
+    <p>foodify · Menú Digital con Realidad Aumentada — <span id="foot-year"></span></p>
   </footer>
 
   <script src="products.js"></script>
