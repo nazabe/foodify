@@ -312,6 +312,21 @@ model-viewer::part(ar-button) { display: none !important; }
   padding: 14px;
 }
 
+.ar-tip {
+  display: none;
+  color: var(--coffee-soft);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+  background: #f6efe5;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.ar-tip:not([hidden]) { display: block; }
+
 .gesture-hint {
   display: flex;
   flex-wrap: wrap;

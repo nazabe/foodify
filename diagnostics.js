@@ -14,6 +14,9 @@ const lines = [];
 let sessionActive = false;
 let lastVisible = null;
 let canvasHooked = false;
+let sessionStartTs = 0;
+let sessionPlaced = false;
+const AR_MODE = new URLSearchParams(location.search).get('ar') || 'webxr';
 
 function fmtTime() {
   const d = new Date();
@@ -42,12 +45,23 @@ mv.addEventListener('ar-status', (e) => {
   if (!status) return;
   if (status === 'session-started') {
     sessionActive = true;
-    log('ar-status: session-started', `memory=${navigator.deviceMemory ?? '?'}GB`);
+    sessionPlaced = false;
+    sessionStartTs = performance.now();
+    log('ar-status: session-started', `mode=${AR_MODE} memory=${navigator.deviceMemory ?? '?'}GB`);
+  } else if (status === 'object-placed') {
+    sessionPlaced = true;
+    const dt = sessionStartTs ? ((performance.now() - sessionStartTs) / 1000).toFixed(1) : '?';
+    log('ar-status: object-placed', `+${dt}s desde inicio`);
   } else if (status === 'failed') {
     sessionActive = false;
     log('ar-status: failed');
   } else if (status === 'not-presenting') {
     sessionActive = false;
+    if (sessionStartTs && !sessionPlaced) {
+      const dt = ((performance.now() - sessionStartTs) / 1000).toFixed(1);
+      log('sesión sin colocación (no hubo object-placed)', `${dt}s`);
+    }
+    sessionStartTs = 0;
     log('ar-status: not-presenting');
   } else {
     log(`ar-status: ${status}`);

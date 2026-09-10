@@ -6,6 +6,9 @@ const product = products[0];
 const MODEL_PARAM = new URLSearchParams(location.search).get('model');
 const VARIANT_LABEL = MODEL_PARAM ? MODEL_PARAM.split('/').pop().replace(/\.glb$/, '') : '';
 
+// ?ar=sceneviewer fuerza AR por la app nativa de Google (comparar vs WebXR en gama baja)
+const AR_PARAM = new URLSearchParams(location.search).get('ar');
+
 function modelUrl() {
   return MODEL_PARAM || product.model;
 }
@@ -17,6 +20,7 @@ const els = {
   btnRetry: document.getElementById('btn-retry'),
   status: document.getElementById('status'),
   btnAr: document.getElementById('btn-ar'),
+  arTip: document.getElementById('ar-tip'),
   desktopNote: document.getElementById('desktop-note'),
   name: document.getElementById('product-name'),
   category: document.getElementById('product-category'),
@@ -105,6 +109,17 @@ async function launchAR() {
   els.btnAr.classList.add('busy');
   els.btnAr.querySelector('.btn-ar-label').textContent = 'Iniciando AR…';
 
+  if (AR_PARAM === 'sceneviewer') {
+    console.log('📱 ?ar=sceneviewer → abriendo AR por Scene Viewer nativo');
+    openSceneViewerFallback();
+    setTimeout(() => {
+      els.btnAr.disabled = false;
+      els.btnAr.classList.remove('busy');
+      els.btnAr.querySelector('.btn-ar-label').textContent = 'Ver en tu espacio (AR)';
+    }, 400);
+    return;
+  }
+
   try {
     if (mv.canActivateAR) {
       console.log('🥽 Activando AR con model-viewer (canActivateAR = true)');
@@ -129,6 +144,7 @@ async function launchAR() {
 function updateAREntry() {
   const isArUsable = IS_HANDHELD;
   els.btnAr.hidden = !isArUsable;
+  els.arTip.hidden = !(isArUsable && mv.loaded);
   els.desktopNote.hidden = isArUsable;
   if (isArUsable && mv.loaded) {
     const label = IS_IOS ? 'Ver en tu espacio (Quick Look)' : 'Ver en tu espacio (AR)';
